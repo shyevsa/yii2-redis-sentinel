@@ -31,7 +31,7 @@ class Connection extends \yii\redis\Connection
     /**
      * @var array
      */
-    public $failed_sentinel;
+    public $failed_sentinel = [];
 
     /**
      * @inheritdoc
@@ -46,9 +46,10 @@ class Connection extends \yii\redis\Connection
             throw new Exception('`sentinels` and `master_name` must be set');
         }
 
+        Yii::beginProfile("Get Master {$this->master_name}", __METHOD__);
         [$this->hostname, $this->port] = $this->discoverMaster();
-
-        $this->open();
+        Yii::endProfile("Get Master {$this->master_name}", __METHOD__);
+        parent::open();
     }
 
     /**
@@ -56,7 +57,7 @@ class Connection extends \yii\redis\Connection
      */
     public function __sleep()
     {
-        if($this->_sentinel !== null){
+        if ($this->_sentinel !== null) {
             $this->_sentinel->close();
         }
         $this->_sentinel = null;
@@ -73,7 +74,7 @@ class Connection extends \yii\redis\Connection
         if ($this->_sentinel !== null) {
             try {
                 return $this->_sentinel->getMaster();
-            } catch (Throwable $e){
+            } catch (Throwable $e) {
                 Yii::error($e->getMessage(), __METHOD__);
             }
         }
@@ -85,12 +86,13 @@ class Connection extends \yii\redis\Connection
                 ];
             }
 
-            if(in_array(hash('sha256', serialize($sentinel)), $this->failed_sentinel, true)){
+            if (in_array(hash('sha256', serialize($sentinel)), $this->failed_sentinel, true)) {
                 continue;
             }
 
             try {
                 $this->_sentinel = Instance::ensure($sentinel, SentinelConnection::class);
+                $this->_sentinel->master_name = $this->master_name;
                 $r = $this->_sentinel->getMaster();
                 if ($r) {
                     Yii::info("sentinel @ {$this->_sentinel->connectionString} gave master {$r[0]}:{$r[1]}",

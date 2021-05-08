@@ -6,6 +6,8 @@ namespace shyevsa\redis;
 
 /**
  *
+ *
+ * @property-read array $master
  */
 class SentinelConnection extends \yii\redis\Connection
 {
@@ -18,6 +20,16 @@ class SentinelConnection extends \yii\redis\Connection
      * @var array
      */
     private $_master_addr;
+
+    /**
+     * @inheritdoc
+     */
+    public $port = 26379;
+
+    /**
+     * @inheritdoc
+     */
+    public $database = null;
 
     /**
      * @throws \yii\db\Exception
