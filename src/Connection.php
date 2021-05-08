@@ -61,7 +61,8 @@ class Connection extends \yii\redis\Connection
             $this->_sentinel->close();
         }
         $this->_sentinel = null;
-        return parent::__sleep();
+        $this->close();
+        return array_keys(get_object_vars($this));
     }
 
     /**
