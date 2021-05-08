@@ -1,0 +1,35 @@
+{
+  "name": "shyevsa/yii2-redis-sentinel",
+  "description": "Yii2 Redis Connection with auto resolve redis `host` and `port` master from redis-sentinel",
+  "keywords": [
+    "yii2",
+    "redis",
+    "sentinel"
+  ],
+  "type": "yii2-extension",
+  "license": "BSD-3-Clause",
+  "support": {
+    "source": "https://github.com/shyevsa/yii2-redis-sentinel"
+  },
+  "authors": [
+    {
+      "name": "Sakurai Evsa",
+      "email": "sakurai.evsa@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.2",
+    "yiisoft/yii2-redis": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "shyevsa\\redis\\": "src"
+    }
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    }
+  ]
+}
