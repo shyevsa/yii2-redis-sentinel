@@ -57,11 +57,16 @@ class Connection extends \yii\redis\Connection
      */
     public function __sleep()
     {
-        if ($this->_sentinel !== null) {
-            $this->_sentinel->close();
+        try {
+            if ($this->_sentinel !== null) {
+                $this->_sentinel->close();
+            }
+            $this->_sentinel = null;
+            $this->close();
+        } catch (Throwable $e) {
+            Yii::debug($e->getMessage(), __METHOD__);
         }
-        $this->_sentinel = null;
-        $this->close();
+
         return array_keys(get_object_vars($this));
     }
 

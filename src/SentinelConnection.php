@@ -4,6 +4,9 @@
 namespace shyevsa\redis;
 
 
+use Yii;
+use yii\db\Exception;
+
 /**
  *
  *
@@ -40,5 +43,22 @@ class SentinelConnection extends \yii\redis\Connection
             $this->_master_addr = $this->executeCommand('sentinel', ['get-master-addr-by-name', $this->master_name]);
         }
         return $this->_master_addr;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function close()
+    {
+        try {
+            parent::close();
+        } catch (Exception $e) {
+            $connection = $this->connectionString . ', database=' . $this->database;
+            Yii::debug([
+                'message' => $e->getMessage(),
+                'connection' => $connection,
+                'note' => 'Ignore Error on Closing'
+            ], __METHOD__);
+        }
     }
 }
